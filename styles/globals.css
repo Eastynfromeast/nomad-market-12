@@ -18,6 +18,10 @@ a {
 	box-sizing: border-box;
 }
 
+#__next {
+	margin: 0 auto;
+}
+
 .blog-post-content h1 {
 	@apply text-red-500 mb-5;
 }
