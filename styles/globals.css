@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Dancing+Script:wght@400..700&family=Roboto+Slab:wght@100..900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,7 +8,7 @@ html,
 body {
 	padding: 0;
 	margin: 0;
-	font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+	font-family: "Roboto Slab", serif;
 }
 
 a {
@@ -29,7 +31,66 @@ a {
 .blog-post-content p {
 	@apply mb-1 text-gray-600;
 }
-
 .blog-post-content ul {
 	@apply pl-10 list-disc;
+}
+
+.cursive {
+	font-family: "Dancing Script", cursive;
+}
+.abril {
+	font-family: "Abril Fatface", serif;
+}
+.screen-container {
+	@apply min-h-screen w-screen flex justify-center items-center;
+}
+
+.screen-container h1 {
+	@apply text-3xl font-extrabold pt-1 pb-5 text-center;
+}
+
+.form-container {
+	@apply bg-[#FCFAED] flex flex-col justify-center items-center border-stone-800 border-2 w-1/2 max-w-md py-8 px-5 shadow-2xl gap-6;
+}
+
+.input-wrap {
+	@apply w-full;
+}
+
+.input-wrap h2 {
+	@apply font-medium border-b-2 border-stone-400 border-dashed pb-1 mb-3;
+}
+
+.input-wrap label {
+	@apply flex items-center gap-2 font-light;
+}
+
+.input-wrap input[type="radio"] {
+	@apply appearance-none bg-transparent border-[1px] border-stone-600 rounded-none size-4 p-1;
+}
+.input-wrap svg {
+	@apply absolute size-4;
+}
+
+.input-wrap select {
+	@apply block w-full h-9 outline-none bg-transparent border-b-[1px] border-black focus:ring focus:ring-stone-300;
+}
+.input-wrap textarea {
+	@apply w-full min-h-3 text-sm bg-transparent border-black border-b-[1px] focus:outline-stone-600;
+}
+
+.input-wrap input[type="email"] {
+	@apply w-full bg-transparent border-black border-b-[1px] focus:outline-stone-600;
+}
+
+input[type="submit"] {
+	@apply block border-black border-[1px] w-full mx-auto py-3 transition hover:bg-black hover:text-[#FCFAED];
+}
+
+.error-message {
+	@apply text-rose-600 text-sm font-medium pt-1;
+}
+
+.success-message {
+	@apply text-indigo-900 text-center text-xl font-semibold leading-tight;
 }

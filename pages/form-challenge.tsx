@@ -79,7 +79,7 @@ export default function FormChallenge() {
 				</div>
 				<div className="message-wrap">
 					{isSubmitSuccessful && <span className="success-message">YAY! Welcome back!</span>}
-					{errors.errors && <span className="error-message">{errors.errors?.message}</span>}
+					{/* {errors.errors && <span className="error-message">{errors.errors?.message}</span>} */}
 				</div>
 			</form>
 		</div>
