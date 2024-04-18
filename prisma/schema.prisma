@@ -24,6 +24,7 @@ model User{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   token Token[]
+  products Product[]
 }
 
 model Token {
@@ -35,4 +36,18 @@ model Token {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+}
+
+model Product {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId Int
+    image String 
+    name String @db.VarChar(191)
+    price Int
+    description String @db.VarChar(300)
+
+    @@index([userId])
 }
