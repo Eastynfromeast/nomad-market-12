@@ -1,75 +1,66 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import Twilio from "twilio";
 import client from "@libs/server/client";
-import withHandler from "@libs/server/withHandler";
+import withHandler, { ResponseType } from "@libs/server/withHandler";
+import { MessageInstance } from "twilio/lib/rest/previewMessaging/v1/message";
+import smtpTransport from "@libs/server/email";
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
+const twilioClient = new (Twilio as any)(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
+
+async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
 	const { phone, email } = req.body;
-	const payload = phone ? { phone: +phone } : { email };
-	const user = await client.user.upsert({
-		where: {
-			...payload,
+	const user = phone ? { phone } : email ? { email } : null;
+	if (!user) return res.status(400).json({ ok: false });
+	const payload = Math.floor(100000 + Math.random() * 900000) + "";
+	const token = await client.token.create({
+		data: {
+			payload,
+			user: {
+				connectOrCreate: {
+					where: {
+						...user,
+					},
+					create: {
+						name: "Anonymous",
+						...user,
+					},
+				},
+			},
 		},
-		create: {
-			name: "Anonymous",
-			...payload,
-		},
-		update: {},
 	});
-	console.log(user);
-	/* if (email) {
-		user = await client.user.findUnique({
-			where: {
-				email,
-			},
-		});
-		if (user) {
-			console.log("Found it");
-		}
-		if (!user) {
-			console.log("Did not find. Will create.");
-			user = await client.user.create({
-				data: {
-					name: "Anonymous",
-					email,
-				},
-			});
-		}
-		console.log(user);
-	}
+
 	if (phone) {
-		user = await client.user.findUnique({
-			where: {
-				phone: +phone,
-			},
+		/* const message: MessageInstance = await twilioClient.messages.create({
+			messagingServiceSid: process.env.TWILIO_MSID,
+			from: process.env.TWILIO_PHONE,
+			to: process.env.MY_PHONE!,
+			body: `Hi, it's from Nomad Market! Your login token is ${payload}`,
 		});
-		if (user) {
-			console.log("Found it");
-		}
-		if (!user) {
-			console.log("Did not find. Will create.");
-			user = await client.user.create({
-				data: {
-					name: "Anonymous",
-					phone: +phone,
-				},
-			});
-		}
-		console.log(user);
-	} */
-	return res.status(200).end();
+		console.log(message); */
+	} else if (email) {
+		/* const mailOptions = {
+			from: process.env.MAIL_ID,
+			to: email,
+			subject: "Nomad Market Authentication Email",
+			text: `Here is Nomad Market authentication Code : ${payload}`,
+			html: `<h2>Hi! We are Nomad Market!</h2><p>Here is your authentication code :)<br/><strong>${payload}</strong> </p>`,
+		};
+		const result = await smtpTransport.sendMail(mailOptions, (error, responses) => {
+			if (error) {
+				console.log(error);
+				return null;
+			} else {
+				console.log(responses);
+				return null;
+			}
+		});
+		smtpTransport.close();
+		console.log(result); */
+	}
+
+	return res.json({
+		ok: true,
+	});
 }
 
 export default withHandler("POST", handler);
-
-/*
-	phone # --> User
-	--> Token--User #123213123
-	--> #123213123 --> SMS --> phone # (Twilio)
-	--> #123213123 --> Token?--User ---> Log the user In
-
-	authentication 
-		we need to know who the user is
-	authorization 
-		if the user is allowed to see what they want to see
-
-*/
