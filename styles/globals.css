@@ -19,10 +19,6 @@ a {
 	box-sizing: border-box;
 }
 
-#__next {
-	@apply max-w-xl mx-auto;
-}
-
 .blog-post-content h1 {
 	@apply text-red-500 mb-5;
 }
