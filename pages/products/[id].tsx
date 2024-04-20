@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import Button from "@components/button";
 import Layout from "@components/layout";
 import { useRouter } from "next/router";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import Link from "next/link";
 import { Product, User } from "@prisma/client";
 import useMuatation from "@libs/client/useMutation";
@@ -20,10 +20,13 @@ interface ItemDetailResponse {
 
 const ItemDetail: NextPage = () => {
 	const router = useRouter();
-	console.log(router.query);
-	const { data, isLoading } = useSWR<ItemDetailResponse>(router.query.id ? `/api/products/${router.query.id}` : null);
+	const { mutate } = useSWRConfig();
+	const { data, isLoading, mutate: boundMutate } = useSWR<ItemDetailResponse>(router.query.id ? `/api/products/${router.query.id}` : null);
 	const [toggleFav] = useMuatation(`/api/products/${router.query.id}/fav`);
 	const onFavClick = () => {
+		if (!data) return;
+		boundMutate(prev => prev && { ...prev, isLiked: !prev.isLiked }, false); // bound mutate function
+		// mutate("/api/users/me", (prev: any) => ({ ok: !prev.ok }), false);
 		toggleFav({});
 	};
 	return (
@@ -76,7 +79,7 @@ const ItemDetail: NextPage = () => {
 				<div>
 					<h2 className="text-2xl font-bold text-gray-900">Similar items</h2>
 					<div className=" mt-6 grid grid-cols-2 gap-4">
-						{data?.relatedProducts.map(product => (
+						{data?.relatedProducts?.map(product => (
 							<Link href={`/products/${product.id}`} key={product.id}>
 								<a className="block overflow-hidden">
 									<div className="h-56 w-full mb-4 bg-slate-300" />
